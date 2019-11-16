@@ -1,49 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Route } from 'react-router-dom';
+
 import data from './data';
 
 // Contexts
 import ProductContext from './contexts/ProductContext';
+import CartContext from './contexts/CartContext';
 
 // Components
 import Navigation from './components/Navigation';
 import Products from './components/Products';
 import ShoppingCart from './components/ShoppingCart';
-import CartContext from './contexts/CartContext';
 
 function App() {
 	const [products] = useState(data);
-	const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState([]);
+  
+    useEffect(() => {
+      console.log('cart: ', cart);
+    }, [cart])
 
 	const addItem = item => {
     // add the given item to the cart
-    setCart(() => {
-      return item;
-    });
+    setCart([...cart, item]);
 	};
 
 	return (
 		<div className="App">
-			<Navigation cart={cart} />
-
       <ProductContext.Provider value={{ products, addItem }}>
-        <CartContext.Provider value={{ cart, setCart }}>
+        <CartContext.Provider value={ cart }>
+			    <Navigation />
+
           {/* Routes */}
           <Route
             exact
             path="/"
-            // render={() => (
-            //   <Products
-            //     products={products}
-            //     addItem={addItem}
-            //   />
-            // )}
             component={Products}
           />
   
           <Route
             path="/cart"
-            // render={() => <ShoppingCart cart={cart} />}
             component={ShoppingCart}
           />
         </CartContext.Provider>
